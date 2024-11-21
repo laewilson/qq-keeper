@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <title>QQ Keeper</title>
+    <script src="/js/jquery.1.10.2.min.js"></script>
+
+</head>
+<body>
+<H1 class="product-title">QQ TV Keeper</H1>
+<div class="setting-zone">
+    <!--设置区区域-->
+    <div class="setting-item">
+        <label class="play-label">播放计时：</label>
+        <input type="number" min="0" step="1" value="0" id="hours"/><label>小时</label>
+        <input type="number" min="0" step="1" max="59" value="25" id="minutes"/><label>分钟</label>
+    </div>
+    <div class="setting-item">
+        <label class="play-label">关闭播放器：</label>
+        <select id="player-selection" class="setting-select bilibili">
+            <option value="哔哩哔哩" class="bilibili">哔哩哔哩</option>
+            <option value="QyClient" class="iqiyi">爱奇艺</option>
+            <option value="QQLive" class="tencent">腾讯视频</option>
+            <option value="mgtv" class="mango-tv">芒果TV</option>
+            <option value="YOUKU" class="youku">优酷</option>
+            <option value="chrome" class="chrome">Chrome</option>
+            <option value="firefox" class="firefox">firefox</option>
+        </select>
+        <input type="checkbox" id="shutdownCheck" class="enable-rest" />
+        <select id="shutdown-selection" class="setting-select shutdown-selection">
+            <option value="shutdown-h" >休眠</option>
+            <option value="shutdown-p" >关机</option>
+        </select>
+    </div>
+    <div class="setting-item rest-setting">
+        <input type="checkbox" id="restCheck" class="enable-rest" checked="checked"/>
+        <label class="rest-label">强制休息</label>
+        <input class="rest-item" type="number" min="0" step="1" value="0" id="restHours"/><label
+            class="rest-item">小时</label>
+        <input class="rest-item" type="number" min="0" step="1" max="59" value="25" id="restMinutes"/><label
+            class="rest-item">分钟</label>
+    </div>
+    <!--倒计时区域-->
+    <div class="timeout-zone">
+        <h1 class="timeout-title">倒计时</h1>
+        <label class="countdown" id="countdown">00:00:00</label>
+    </div>
+    <div class="setting-item">
+        <button class="set-btn start-btn" id="start">开始</button>
+        <button class="set-btn stop-btn" id="stop">停止</button>
+        <!--        <button class="set-btn" id="reset">重置</button>-->
+    </div>
+</div>
+
+<script>
+    document.write('<script src="/js/index.js?t=' + new Date().getTime() + '"><\/script>');
+    document.write(' <link rel="stylesheet" href="/css/index.css?t=' + new Date().getTime() + '">');
+
+</script>
+</body>
+</html>

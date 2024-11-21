@@ -1,0 +1,8 @@
+server:
+  port: 8922
+spring:
+  profiles:
+    active: dev
+system:
+  backend:
+    app-info-dir: c:/qq-keeper

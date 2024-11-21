@@ -1,0 +1,86 @@
+body{
+    background-color: #f5f5f5;
+/*
+    text-align: center;
+*/
+}
+.product-title{
+    text-align: center;
+    color: hotpink;
+}
+.setting-zone{
+    margin-top: 20px;
+    text-align: center;
+}
+.setting-item{
+    margin-top: 20px;
+}
+.setting-item input[type=text], .setting-item input[type=number]  {
+    width: 4%;
+    text-align: center;
+    height: 50px;
+    font-size: 30px;
+    margin-right: 20px;
+    border-radius: 10px;
+    color: deepskyblue
+}
+.setting-select{
+    width: 10%;
+    text-align: center;
+    height: 50px;
+    font-size: 30px;
+    margin-right: 20px;
+    border-radius: 10px;
+}
+.setting-item label{
+    margin-right: 10px;
+    font-size: 30px
+
+}
+.setting-item button{
+    width: 8%;
+    height: 50px;
+    font-size: 30px;
+    border-radius: 10px;
+    cursor: pointer;
+    background-color: yellowgreen;
+    color: white;
+    margin-right: 20px;
+}
+.timeout-zone{
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+.timeout-zone label{
+    font-size: 50px;
+    color: darkviolet;
+}
+.enable-rest{
+    width: 30px;
+    height: 20px;
+}
+.bilibili{
+    color: hotpink;
+}
+.iqiyi{
+    color: #00da5a;
+}
+.youku{
+    color: #0ab0ff;
+}
+.tencent{
+    color: #00d1d1;
+}
+.mango-tv{
+    color: #ff7100;
+}
+.play-label{
+    color: #ff7100;
+}
+.shutdown-selection{
+    width: 6%;
+    text-align: center;
+}
+.disabled{
+    background-color: gray !important;
+}

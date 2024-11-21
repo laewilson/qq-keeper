@@ -1,0 +1,8 @@
+
+spring:
+  web:
+    resources:
+      static-locations: file:${system.front.dir}/
+system:
+  front:
+    dir: ./src/main/resources/static
