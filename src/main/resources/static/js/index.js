@@ -6,21 +6,25 @@ keeper = {
         this.bindEvents();
     },
     bindEvents: function () {
+        //开始按钮点击事件
         $('#start').click(function () {
-            console.log('start');
-            keeper.startBtn.disable();
             var totalSeconds = keeper.getTimeoutSecs();
-            keeper.startCountdown(totalSeconds);
+            keeper.action(function () {
+                keeper.startBtn.disable();
+                keeper.startCountdown(totalSeconds);
+            });
         });
+        //停止按钮点击事件
         $('#stop').click(function () {
             keeper.stop();
         });
+        //
         $("#player-selection").change(function() {
             const selectElement = document.getElementById("player-selection");
             const selectedOption = selectElement.options[selectElement.selectedIndex];
             //选中的样式跟随选项
             let className = selectedOption.getAttribute("class");
-            selectElement.setAttribute("class", className);
+            selectElement.setAttribute("class", "setting-select "+className);
         });
         $("#restCheck").change(function() {
             let enableRest = $(this).is(":checked");
@@ -68,27 +72,37 @@ keeper = {
     disableRest: function () {
         $(".set-btn").attr('disabled', false);
     },
-    action: function () {
+
+    action: function (actionSuccess) {
         console.log('keeper action');
         let shutdownType = $("#shutdownCheck").is(":checked")? $("#shutdown-selection").val() : null;
+        let hours = parseInt($('#hours').val());
+        let minutes = parseInt($('#minutes').val());
         $.post('/api/keeper/stop', {
             appName: $("#player-selection").val(),
             appId: $("#player-selection").find(":selected").data("id")
+            ,hours: hours
+            ,minutes: minutes
             ,shutdownType: shutdownType
         }, function(data) {
             console.log(data);
             keeper.play = false;
-            let enableRest = $("#restCheck").is(":checked");
-            //
-            if (enableRest) {
-                keeper.enableRest();
-                var totalSeconds = keeper.getTimeoutSecs();
-                keeper.startCountdown(totalSeconds);
+            if (isFunction(actionSuccess)) {
+                actionSuccess();
             }
 
+        }).fail(function(xhr, status, error) {
+            alert("发生错误: 请检查后台程序");
         });
-
-
+    },
+    restAction: function () {
+        let enableRest = $("#restCheck").is(":checked");
+        //
+        if (enableRest) {
+            keeper.enableRest();
+            var totalSeconds = keeper.getTimeoutSecs();
+            keeper.startCountdown(totalSeconds);
+        }
     },
     interval: null,
     stop: function () {
@@ -131,7 +145,9 @@ keeper = {
                     return;
                 }
                 document.getElementById('countdown').innerHTML = "时间到！";
-                keeper.action();
+                keeper.action(function () {
+                    keeper.restAction();
+                });
                 return;
             }
             var remainingSeconds = Math.ceil(remainingTime / 1000);
@@ -152,3 +168,6 @@ keeper = {
     }
 }
 
+function isFunction(value) {
+    return typeof value == 'function';
+}
