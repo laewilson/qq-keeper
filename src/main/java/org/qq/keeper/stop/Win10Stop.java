@@ -11,7 +11,7 @@ import java.util.List;
 @Slf4j
 public class Win10Stop implements StopApp {
 
-    private static List<String> stopTwiceApps = new ArrayList<>(Arrays.asList("mgtv"));
+    private static List<String> stopTwiceApps = new ArrayList<>(Arrays.asList("mgtv","哔哩哔哩"));
 
     @Override
     public void stop(String appName) {
