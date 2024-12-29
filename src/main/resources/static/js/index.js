@@ -11,12 +11,13 @@ keeper = {
             var totalSeconds = keeper.getTimeoutSecs();
             keeper.action(function () {
                 keeper.startBtn.disable();
+                keeper.play = true;
                 keeper.startCountdown(totalSeconds);
             });
         });
         //停止按钮点击事件
-        $('#stop').click(function () {
-            keeper.stop();
+        $('#cancel').click(function () {
+            keeper.cancel();
         });
         //
         $("#player-selection").change(function() {
@@ -105,9 +106,19 @@ keeper = {
         }
     },
     interval: null,
-    stop: function () {
+    cancel: function () {
         clearInterval(this.interval);
-        this.reset();
+        //后台cancel
+        $.post('/api/keeper/cancel', {
+            appName: $("#player-selection").val()
+        }, function(data) {
+            console.log(data);
+            keeper.reset();
+
+        }).fail(function(xhr, status, error) {
+            alert("【取消任务】发生错误: 请检查后台程序");
+        });
+
     },
     count: function (hours, minutes) {
         return hours*60*60 + minutes*60;

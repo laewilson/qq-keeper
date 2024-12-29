@@ -29,10 +29,10 @@ public class KeeperController {
 
     @PostMapping("/stop")
     public Result stop(StopDTO dto){
+        StopApp stopApp = new Win10Stop();
 
         // 判断是否需要关机
         if(dto.isTimeToStop() && StrUtil.isNotEmpty(dto.getShutdownType())){
-            StopApp stopApp = new Win10Stop();
             stopApp.shutdown(dto.getShutdownType());
             return new Result<>().success("shutdown now");
         }
@@ -44,6 +44,9 @@ public class KeeperController {
         TimerTask task = new TimerTask() {
             @Override
             public void run() {
+                if (StrUtil.isNotEmpty(dto.getShutdownType())){
+                    stopApp.shutdown(dto.getShutdownType());
+                }
                 stopApp(dto.getAppName());
             }
         };
@@ -59,6 +62,7 @@ public class KeeperController {
     public Result cancel(CancelDTO dto){
         Timer timer = taskMap.get(dto.getAppName());
         timer.cancel();
+        log.info("=== cancel stop app {}", dto.getAppName());
         return new Result<>().success("cancel now");
     }
 
