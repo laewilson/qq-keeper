@@ -34,12 +34,12 @@
             <scope>provided</scope>
         </dependency>
         <!-- knife4j 3.0.2 在线调试与查看文档。  启动的通过 doc.html访问-->
-<!--        <dependency>-->
-<!--            <groupId>com.github.xiaoymin</groupId>-->
-<!--            <artifactId>knife4j-spring-boot-starter</artifactId>-->
-<!--            <version>3.0.2</version>-->
-<!--            <scope>provided</scope>-->
-<!--        </dependency>-->
+        <dependency>
+            <groupId>com.github.xiaoymin</groupId>
+            <artifactId>knife4j-spring-boot-starter</artifactId>
+            <version>3.0.2</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
     <build>
         <finalName>qq-keeper</finalName>

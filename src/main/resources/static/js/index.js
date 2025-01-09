@@ -5,10 +5,12 @@ keeper = {
     init: function () {
         this.bindEvents();
     },
+    expiredTime: 0,
     bindEvents: function () {
         //开始按钮点击事件
         $('#start').click(function () {
             var totalSeconds = keeper.getTimeoutSecs();
+            keeper.expiredTime = Date.now() + totalSeconds * 1000;
             keeper.action(function () {
                 keeper.startBtn.disable();
                 keeper.play = true;
@@ -18,8 +20,9 @@ keeper = {
         //停止按钮点击事件
         $('#cancel').click(function () {
             keeper.cancel();
+            keeper.expiredTime = 0;
         });
-        //
+        //播放器选择事件
         $("#player-selection").change(function() {
             const selectElement = document.getElementById("player-selection");
             const selectedOption = selectElement.options[selectElement.selectedIndex];
@@ -27,6 +30,7 @@ keeper = {
             let className = selectedOption.getAttribute("class");
             selectElement.setAttribute("class", "setting-select "+className);
         });
+        //休息时间选择事件
         $("#restCheck").change(function() {
             let enableRest = $(this).is(":checked");
             if (enableRest) {
@@ -35,8 +39,9 @@ keeper = {
                 $(".rest-item").hide();
             }
         });
-
+        document.addEventListener('visibilitychange', keeper.handleVisibilityChange, false);
     },
+
     startBtn:{
       enable: function () {
           $('.start-btn').attr('disabled', false);
@@ -48,6 +53,26 @@ keeper = {
           $('.start-btn').addClass('disabled');
 
       }
+    },
+    handleVisibilityChange:function () {
+
+        if (keeper.expiredTime <=0){
+            return
+        }
+        if (keeper.expiredTime < Date.now()) {
+            return;
+        }
+
+        if (document.visibilityState === 'visible') {
+            // 页面重新显示时的处理逻辑
+            console.log('Page is now visible,  resume counting down');
+            // 立即执行一次任务
+            keeper.setInterval();
+        } else {
+            console.log('Page is now hidden, pause counting down');
+            // 如果需要可以在页面隐藏时清除定时器以节省资源
+            clearInterval(keeper.interval);
+        }
     },
     getTimeoutSecs: function () {
         let restCheck = $("#restCheck").is(":checked");
@@ -75,7 +100,7 @@ keeper = {
     },
 
     action: function (actionSuccess) {
-        console.log('keeper action');
+        console.log('keeper action '+ new Date());
         let shutdownType = $("#shutdownCheck").is(":checked")? $("#shutdown-selection").val() : null;
         let hours = parseInt($('#hours').val());
         let minutes = parseInt($('#minutes').val());
@@ -93,7 +118,7 @@ keeper = {
             }
 
         }).fail(function(xhr, status, error) {
-            alert("发生错误: 请检查后台程序");
+            alert("【设置定时任务】发生错误: 请检查后台程序");
         });
     },
     restAction: function () {
@@ -102,12 +127,13 @@ keeper = {
         if (enableRest) {
             keeper.enableRest();
             var totalSeconds = keeper.getTimeoutSecs();
+            keeper.expiredTime = Date.now() + totalSeconds * 1000;
             keeper.startCountdown(totalSeconds);
         }
     },
     interval: null,
     cancel: function () {
-        clearInterval(this.interval);
+        console.log('keeper cancel '+ new Date());
         //后台cancel
         $.post('/api/keeper/cancel', {
             appName: $("#player-selection").val()
@@ -138,45 +164,52 @@ keeper = {
             $(".timeout-title").html("休息倒计时");
         }
         this.resetCountdown();
-        var startTime = new Date().getTime(); // 获取开始时间
-//        totalSeconds= totalSeconds+0.1;
-        this.interval = setInterval(function() {
-            var now = new Date().getTime(); // 当前时间
-            var elapsed = now - startTime; // 已经过的时间
-            // 计算剩余时间
-            var remainingTime = totalSeconds * 1000 - elapsed;
+        keeper.setInterval();
+    },
+    setInterval: function () {
+        keeper.interval = setInterval(function() {
+            keeper.countDown();
+        }, 1000); // 每秒更新一次
+    },
+    stop: function () {
+        clearInterval(this.interval);
+    },
+    countDown: function () {
+        var now = new Date().getTime(); // 当前时间
+        // 计算剩余时间
+        var remainingTime = keeper.expiredTime - now;
 
-            if (remainingTime <= 0) {
-                keeper.stop();
-                if (!keeper.play) {
-                    keeper.disableRest();
-                    keeper.play = true;
-                    console.log('rest');
-                    keeper.startBtn.enable();
-                    return;
-                }
-                document.getElementById('countdown').innerHTML = "时间到！";
-                keeper.action(function () {
-                    keeper.restAction();
-                });
+        if (remainingTime <= 0) {
+            keeper.stop();
+            if (!keeper.play) {
+                keeper.disableRest();
+                keeper.play = true;
+                console.log('rest');
+                keeper.startBtn.enable();
                 return;
             }
-            var remainingSeconds = Math.ceil(remainingTime / 1000);
-            var hours = Math.floor(remainingSeconds / 3600);
-            var minutes = Math.floor((remainingSeconds % 3600) / 60);
-            var seconds = Math.ceil(remainingSeconds % 60);
+            document.getElementById('countdown').innerHTML = "时间到！";
+            // 执行倒计时结束后的操作
+            keeper.action(function () {
+                keeper.restAction();
+            });
+            return;
+        }
+        var remainingSeconds = Math.ceil(remainingTime / 1000);
+        var hours = Math.floor(remainingSeconds / 3600);
+        var minutes = Math.floor((remainingSeconds % 3600) / 60);
+        var seconds = Math.ceil(remainingSeconds % 60);
 
-            // 格式化输出
-            hours = (hours < 10) ? "0" + hours : hours;
-            minutes = (minutes < 10) ? "0" + minutes : minutes;
-            seconds = (seconds < 10) ? "0" + seconds : seconds;
-            // 显示
-            let countdown = hours + ":" + minutes + ":" + seconds;
-//            console.log("current time: "+countdown);
-            document.getElementById('countdown').innerHTML = countdown;
+        // 格式化输出
+        hours = (hours < 10) ? "0" + hours : hours;
+        minutes = (minutes < 10) ? "0" + minutes : minutes;
+        seconds = (seconds < 10) ? "0" + seconds : seconds;
+        // 显示
+        let countdown = hours + ":" + minutes + ":" + seconds;
+        //            console.log("current time: "+countdown);
+        document.getElementById('countdown').innerHTML = countdown;
+    },
 
-        }, 1000); // 每秒更新一次
-    }
 }
 
 function isFunction(value) {

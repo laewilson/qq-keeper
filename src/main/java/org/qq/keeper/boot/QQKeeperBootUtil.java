@@ -48,13 +48,13 @@ public class QQKeeperBootUtil {
             if (line.contains(CLASS.getName())) {
                 String[] parts = line.split(" ");
                 String pid = parts[0];
-                log.info("当前实例{}的PID: {}", CLASS.getName(), pid);
+                log.info("当前实例 {} 的 PID: {}", CLASS.getName(), pid);
                 pidList.add(pid);
             }
             if (line.contains(APP_NAME)) {
                 String[] parts = line.split(" ");
                 String pid = parts[0];
-                log.info("当前实例{}的PID: {}", APP_NAME, pid);
+                log.info("当前实例 {} 的 PID: {}", APP_NAME, pid);
                 pidList.add(pid);
             }
 
