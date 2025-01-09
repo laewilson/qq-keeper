@@ -20,7 +20,7 @@ keeper = {
         //停止按钮点击事件
         $('#cancel').click(function () {
             keeper.cancel();
-            keeper.expiredTime = 0;
+
         });
         //播放器选择事件
         $("#player-selection").change(function() {
@@ -140,7 +140,7 @@ keeper = {
         }, function(data) {
             console.log(data);
             keeper.reset();
-
+            keeper.expiredTime = 0;
         }).fail(function(xhr, status, error) {
             alert("【取消任务】发生错误: 请检查后台程序");
         });
@@ -151,6 +151,7 @@ keeper = {
     },
     reset: function () {
         this.resetCountdown();
+        keeper.stop();
         keeper.startBtn.enable();
     },
     resetCountdown: function () {
